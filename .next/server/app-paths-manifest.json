@@ -1,0 +1,13 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/auth/signout/route": "app/auth/signout/route.js",
+  "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
+  "/administration/page": "app/administration/page.js",
+  "/educateur/page": "app/educateur/page.js",
+  "/espace-jeune/page": "app/espace-jeune/page.js",
+  "/mot-de-passe-oublie/page": "app/mot-de-passe-oublie/page.js",
+  "/page": "app/page.js",
+  "/reinitialiser-mot-de-passe/page": "app/reinitialiser-mot-de-passe/page.js",
+  "/connexion/page": "app/connexion/page.js",
+  "/inscription/page": "app/inscription/page.js"
+}

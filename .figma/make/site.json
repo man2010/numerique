@@ -1,0 +1,10 @@
+{
+  "description": "This interactive web app educates children from SOS Villages d'Enfants in Senegal through age-appropriate content and quizzes, fostering digital awareness and skills.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
