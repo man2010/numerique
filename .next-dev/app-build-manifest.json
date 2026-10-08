@@ -11,6 +11,11 @@
       "static/chunks/main-app.js",
       "static/chunks/app/espace-jeune/page.js"
     ],
+    "/connexion/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/connexion/page.js"
+    ],
     "/manifest.webmanifest/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

@@ -3,6 +3,7 @@ import { createClient } from "../../src/lib/supabase/server";
 import SosLogo from "../components/sos-logo";
 import ThemeToggle from "../components/theme-toggle";
 import WorkspaceMobileMenu from "../components/workspace-mobile-menu";
+import EducatorLearnerMonitor from "./educator-learner-monitor";
 
 type Learner = { id: string; display_name: string; age_band: string | null };
 type ModuleProgress = { learner_id: string; module_id: string; progress_percent: number; score: number | null; completed_at: string | null; updated_at: string };
@@ -59,14 +60,7 @@ export default async function WorkspacePage() {
       <div className="educator-main-grid">
         <section className="educator-panel learners-panel" id="jeunes">
           <div className="educator-section-heading"><div><span className="educator-kicker">TON GROUPE</span><h2>Les jeunes que tu accompagnes</h2><p>Un aperçu de leur activité et de leurs progrès.</p></div><span className="educator-count-pill">{learners.length} jeune{learners.length === 1 ? "" : "s"}</span></div>
-          {learners.length ? <div className="educator-learner-list">{learners.map((learner, index) => {
-            const items = progress.filter((item) => item.learner_id === learner.id);
-            const done = items.filter((item) => item.completed_at).length;
-            const started = items.filter((item) => item.progress_percent > 0 && !item.completed_at).length;
-            const scoreItems = items.filter((item) => item.score !== null);
-            const averageScore = scoreItems.length ? Math.round(scoreItems.reduce((sum, item) => sum + (item.score ?? 0), 0) / scoreItems.length) : null;
-            return <article className="educator-learner-row" key={learner.id}><span className={`learner-avatar educator-avatar avatar-${index % 4}`}>{learner.display_name?.trim().charAt(0)?.toUpperCase() || "J"}</span><div className="educator-learner-name"><b>{learner.display_name}</b><small>{learner.age_band ? `${ageIcons[learner.age_band] ?? "👤"} ${ageNames[learner.age_band] ?? learner.age_band}` : "Âge non renseigné"}</small></div><div className="learner-activity"><b>{done + started}</b><small>activité{done + started === 1 ? "" : "s"} suivie{done + started === 1 ? "" : "s"}</small></div><div className="learner-score"><b>{averageScore === null ? "—" : `${averageScore}%`}</b><small>{averageScore === null ? "pas de quiz noté" : "score moyen"}</small></div><span className="learner-row-arrow" aria-hidden="true">↗</span></article>;
-          })}</div> : <div className="educator-empty-state"><div className="empty-illustration" aria-hidden="true"><span>👩🏾‍🏫</span><i>✦</i></div><div><b>Ton groupe se construit ici</b><p>Aucun jeune n’est encore rattaché à ton compte. Dès que l’équipe associera les profils, tu retrouveras ici leur activité et leurs progrès.</p></div></div>}
+          {learners.length ? <EducatorLearnerMonitor learners={learners} progress={progress} modules={modules} tracks={tracks} /> : <div className="educator-empty-state"><div className="empty-illustration" aria-hidden="true"><span>👩🏾‍🏫</span><i>✦</i></div><div><b>Ton groupe se construit ici</b><p>Aucun jeune n’est encore rattaché à ton compte. Dès que l’équipe associera les profils, tu retrouveras ici leur activité et leurs progrès.</p></div></div>}
           <div className="educator-privacy-note"><span>♧</span> Les données affichées sont limitées aux jeunes rattachés à ton compte.</div>
         </section>
 

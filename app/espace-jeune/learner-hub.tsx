@@ -90,16 +90,54 @@ function ReviewStudio({ missions }: { missions: Mission[] }) {
   })));
   const [cardIndex, setCardIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [reviewed, setReviewed] = useState<string[]>([]);
-  const card = cards[cardIndex];
+  const [phase, setPhase] = useState<"learn" | "review" | "done">("learn");
+  const [reviewQueue, setReviewQueue] = useState<string[]>([]);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [deferredIds, setDeferredIds] = useState<string[]>([]);
+  const [masteredIds, setMasteredIds] = useState<string[]>([]);
+  const [speechState, setSpeechState] = useState<"idle" | "speaking" | "paused">("idle");
+  const card = phase === "learn" ? cards[cardIndex] : phase === "review" ? cards.find((item) => item.id === reviewQueue[reviewIndex]) : undefined;
+  useEffect(() => { setSpeechState("idle"); return () => { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); }; }, [card?.id, revealed]);
+  if (phase === "done") return <section className="review-studio" aria-label="Bilan de l’atelier"><div className="review-complete"><span className="review-complete-icon">✦</span><span className="learner-eyebrow">ATELIER TERMINÉ</span><h2>Tu as fait travailler ta mémoire !</h2><p>{masteredIds.length} fiche{masteredIds.length === 1 ? "" : "s"} retenue{masteredIds.length === 1 ? "" : "s"} sur {cards.length}. Les fiches encore difficiles peuvent revenir pour un nouveau tour.</p><div className="review-complete-actions">{deferredIds.length > 0 && <button type="button" onClick={() => { setReviewQueue(deferredIds); setDeferredIds([]); setReviewIndex(0); setPhase("review"); }}>Revoir {deferredIds.length} fiche{deferredIds.length === 1 ? "" : "s"} <span>↻</span></button>}<button type="button" onClick={() => { setCardIndex(0); setReviewIndex(0); setReviewQueue([]); setDeferredIds([]); setMasteredIds([]); setPhase("learn"); }}>Recommencer l’atelier <span>→</span></button></div></div></section>;
   if (!card) return <section className="review-studio"><div className="review-empty"><span>🧩</span><h2>Ton atelier se prépare</h2><p>Les cartes de révision apparaîtront avec les leçons publiées pour ton parcours.</p></div></section>;
-  const moveCard = () => { setReviewed((current) => current.includes(card.id) ? current : [...current, card.id]); setCardIndex((current) => (current + 1) % cards.length); setRevealed(false); };
+  const toggleCardSpeech = () => {
+    if (!("speechSynthesis" in window)) return;
+    const synthesis = window.speechSynthesis;
+    if (speechState === "speaking" && synthesis.speaking) { synthesis.pause(); setSpeechState("paused"); return; }
+    if (speechState === "paused" && synthesis.paused) { synthesis.resume(); setSpeechState("speaking"); return; }
+    synthesis.cancel();
+    const text = revealed ? card.answer : card.prompt;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "fr-FR";
+    utterance.rate = 0.92;
+    utterance.pitch = 1.02;
+    utterance.onstart = () => setSpeechState("speaking");
+    utterance.onend = () => setSpeechState("idle");
+    utterance.onerror = () => setSpeechState("idle");
+    synthesis.speak(utterance);
+  };
+  const markCard = (remembered: boolean) => {
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    setSpeechState("idle");
+    setRevealed(false);
+    if (remembered) setMasteredIds((current) => current.includes(card.id) ? current : [...current, card.id]);
+    if (phase === "learn") {
+      const nextQueue = remembered ? reviewQueue : [...reviewQueue, card.id];
+      setReviewQueue(nextQueue);
+      if (cardIndex + 1 >= cards.length) { setPhase(nextQueue.length ? "review" : "done"); setReviewIndex(0); }
+      else setCardIndex((current) => current + 1);
+      return;
+    }
+    if (!remembered) setDeferredIds((current) => [...current, card.id]);
+    if (reviewIndex + 1 >= reviewQueue.length) setPhase("done");
+    else setReviewIndex((current) => current + 1);
+  };
   return <section className="review-studio" aria-label="Atelier de révision active">
-    <div className="review-heading"><div><span className="learner-eyebrow">APPRENDRE EN SE RAPPELANT</span><h2>L’atelier des bons réflexes</h2><p>Essaie de retrouver la réponse avant de retourner la carte. Toutes les fiches viennent des leçons de ton parcours.</p></div><div className="review-session-count"><b>{reviewed.length}<small> / {cards.length}</small></b><span>fiches vues<br/>dans cette session</span></div></div>
+    <div className="review-heading"><div><span className="learner-eyebrow">APPRENDRE EN SE RAPPELANT</span><h2>L’atelier des bons réflexes</h2><p>Les cartes oubliées reviennent dans une seconde tournée. Celles que tu maîtrises quittent la pile.</p></div><div className="review-session-count"><b>{masteredIds.length}<small> / {cards.length}</small></b><span>fiches retenues<br/>dans cet atelier</span></div></div>
     <div className={`review-flashcard ${revealed ? "revealed" : ""}`} key={card.id}>
-      <div className="review-card-top"><span>{card.icon} {card.tag}</span><small>FICHE {cardIndex + 1} / {cards.length}</small></div>
-      <div className="review-card-content"><span className="review-card-icon">{revealed ? "✦" : "💭"}</span><span className="review-card-label">{revealed ? "LE RÉFLEXE À RETENIR" : "À TOI DE TE RAPPELER"}</span><h3>{revealed ? card.answer : card.prompt}</h3>{revealed && <p>{card.title}</p>}</div>
-      {!revealed ? <button className="review-reveal" onClick={() => setRevealed(true)}>Retourner la carte <span>↻</span></button> : <div className="review-actions"><button onClick={moveCard}>Je veux revoir <span>↻</span></button><button onClick={moveCard}>C’est retenu <span>✓</span></button></div>}
+      <div className="review-card-top"><span>{card.icon} {card.tag}</span><small>{phase === "learn" ? "PREMIER TOUR" : "À REVOIR"} · {phase === "learn" ? cardIndex + 1 : reviewIndex + 1} / {phase === "learn" ? cards.length : reviewQueue.length}</small></div>
+      <div className="review-card-content"><span className="review-card-icon">{revealed ? "✦" : "💭"}</span><span className="review-card-label">{revealed ? "LE RÉFLEXE À RETENIR" : "À TOI DE TE RAPPELER"}</span><h3>{revealed ? card.answer : card.prompt}</h3>{revealed && <p>{card.title}</p>}<button type="button" className={`lesson-audio-button review-audio-button ${speechState === "speaking" ? "is-speaking" : ""}`} onClick={toggleCardSpeech} aria-label={speechState === "speaking" ? "Mettre la lecture audio en pause" : speechState === "paused" ? "Reprendre la lecture audio" : "Écouter cette fiche"} aria-pressed={speechState === "speaking"}><span aria-hidden="true">{speechState === "speaking" ? "Ⅱ" : speechState === "paused" ? "▶" : "🔊"}</span><span>{speechState === "speaking" ? "Pause" : speechState === "paused" ? "Reprendre" : "Écouter"}</span></button></div>
+      {!revealed ? <button className="review-reveal" onClick={() => setRevealed(true)}>Retourner la carte <span>↻</span></button> : <div className="review-actions"><button onClick={() => markCard(false)}>Je veux revoir <span>↻</span></button><button onClick={() => markCard(true)}>C’est retenu <span>✓</span></button></div>}
       <div className="review-card-decoration" aria-hidden="true">✳</div>
     </div>
     <div className="review-method"><span>🧠</span><p><b>La mémoire active</b> aide à retenir en essayant de se rappeler avant de relire. Prends ton temps, il n’y a pas de mauvaise note ici.</p></div>
