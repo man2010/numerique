@@ -2383,6 +2383,31 @@ a {
     box-shadow: 0 0 0 5px #00a9c526;
   }
 }
+.xp-progress {
+  display: block;
+  width: min(170px,30vw);
+  height: 4px;
+  margin-top: 2px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #edf2f3;
+}
+.xp-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,#ffc82e,#ee7a36);
+  transition: width .4s ease;
+}
+.lesson-save-error {
+  margin: 10px 0;
+  padding: 11px 13px;
+  border-radius: 11px;
+  background: #fff0ed;
+  color: #a64232;
+  font-size: 12px;
+  line-height: 1.5;
+}
 @keyframes reveal-up {
   from {
     opacity: 0;

@@ -1,6 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/auth/signout/route": "app/auth/signout/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
   "/administration/page": "app/administration/page.js",
   "/educateur/page": "app/educateur/page.js",
