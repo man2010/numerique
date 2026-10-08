@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "../../src/lib/supabase/server";
 import LearnerHub from "./learner-hub";
-import SosLogo from "../components/sos-logo";
-import ThemeToggle from "../components/theme-toggle";
 
 export default async function LearnerWorkspacePage() {
   const supabase = await createClient();
@@ -30,5 +28,5 @@ export default async function LearnerWorkspacePage() {
     modules = moduleData ?? [];
   }
   progress = progressData ?? [];
-  return <><header className="workspace-header"><SosLogo/><nav aria-label="Navigation de mon espace"><a href="#mon-parcours">Mon parcours</a><a href="#bons-reflexes">Mes bons réflexes</a></nav><ThemeToggle /><form action="/auth/signout" method="post"><button className="landing-login">Se déconnecter</button></form></header><LearnerHub name={profile?.display_name ?? "Explorateur·rice"} band={band} track={track} modules={modules} progress={progress} badges={badgeData ?? []} earnedBadges={earnedBadgeData ?? []} /></>;
+  return <LearnerHub name={profile?.display_name ?? "Explorateur·rice"} band={band} track={track} modules={modules} progress={progress} badges={badgeData ?? []} earnedBadges={earnedBadgeData ?? []} />;
 }

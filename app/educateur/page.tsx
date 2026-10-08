@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "../../src/lib/supabase/server";
 import SosLogo from "../components/sos-logo";
 import ThemeToggle from "../components/theme-toggle";
+import WorkspaceMobileMenu from "../components/workspace-mobile-menu";
 
 type Learner = { id: string; display_name: string; age_band: string | null };
 type ModuleProgress = { learner_id: string; module_id: string; progress_percent: number; score: number | null; completed_at: string | null; updated_at: string };
@@ -41,7 +42,7 @@ export default async function WorkspacePage() {
   modules.forEach((module) => modulesByTrack.set(module.track_id, [...(modulesByTrack.get(module.track_id) ?? []), module]));
 
   return <main className="workspace-page educator-page">
-    <header className="workspace-header"><SosLogo/><nav aria-label="Navigation éducateur"><a href="#overview">Vue d’ensemble</a><a href="#jeunes">Jeunes suivis</a><a href="#ressources">Ressources</a></nav><ThemeToggle/><form action="/auth/signout" method="post"><button>Se déconnecter</button></form></header>
+    <header className="workspace-header"><SosLogo/><nav className="workspace-desktop-nav" aria-label="Navigation éducateur"><a href="#overview">Vue d’ensemble</a><a href="#jeunes">Jeunes suivis</a><a href="#ressources">Ressources</a></nav><ThemeToggle/><form className="workspace-desktop-logout" action="/auth/signout" method="post"><button>Se déconnecter</button></form><form className="workspace-mobile-logout-icon" action="/auth/signout" method="post"><button type="submit" aria-label="Se déconnecter" title="Se déconnecter"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-8h6a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-6"/></svg></button></form><WorkspaceMobileMenu items={[{ label: "Vue d’ensemble", href: "#overview" }, { label: "Jeunes suivis", href: "#jeunes" }, { label: "Ressources", href: "#ressources" }]} /></header>
     <div className="educator-layout" id="overview">
       <section className="educator-welcome">
         <div className="educator-welcome-copy"><span className="educator-kicker"><i/> ESPACE ÉDUCATEUR · SOS VILLAGES D’ENFANTS</span><h1>Bonjour{profile?.display_name ? `, ${profile.display_name.split(" ")[0]}` : ""} <span>👋</span></h1><p>Accompagne les jeunes dans leurs découvertes numériques, repère leurs besoins et prépare des séances qui leur parlent.</p><div className="educator-welcome-actions"><a href="#jeunes">Voir les jeunes <span>↓</span></a><a className="educator-secondary-link" href="#ressources">Préparer une séance <span>↗</span></a></div></div>

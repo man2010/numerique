@@ -254,3 +254,42 @@ html[data-theme="dark"] .educator-welcome { border-color: #214750; background: l
 .achievement-shelf { margin: 0 0 27px; padding: 20px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: 0 9px 28px #173b4908; }.achievement-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 14px; }.achievement-heading h2 { margin: 5px 0 0; color: var(--ink); font: 800 clamp(20px,2.5vw,26px)/1.15 Manrope; letter-spacing: -.04em; }.achievement-heading > span { padding: 8px 11px; border-radius: 99px; background: #fff6df; color: #a27418; font-size: 9px; font-weight: 800; }.achievement-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }.achievement-card { display: grid; grid-template-columns: 43px minmax(0,1fr) 17px; align-items: center; gap: 11px; min-height: 92px; padding: 12px; border: 1px solid var(--line); border-radius: 15px; background: #fbfdfd; }.achievement-card.earned { border-color: #c8e9d7; background: linear-gradient(135deg,#f0fbf3,#fcfdf9); }.achievement-card.locked { opacity: .76; }.achievement-icon { display: grid; width: 41px; height: 41px; place-items: center; border-radius: 14px; background: #eef3f3; color: #7a9296; font-size: 20px; }.achievement-card.earned .achievement-icon { background: #dcf4e4; color: #258453; font-size: 23px; }.achievement-copy { min-width: 0; }.achievement-copy b { display: block; overflow: hidden; color: var(--ink); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }.achievement-copy p { display: -webkit-box; min-height: 27px; margin: 4px 0; overflow: hidden; color: var(--muted); font-size: 8px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }.achievement-copy > small { color: #628c74; font-size: 8px; font-weight: 700; }.achievement-card.locked .achievement-copy > small { color: #83969a; }.achievement-progress { height: 4px; margin: 6px 0 4px; overflow: hidden; border-radius: 99px; background: #e6eeee; }.achievement-progress i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#ffc82e,#ee7a36); transition: width .35s ease; }.achievement-state { color: #2b9b65; font-size: 13px; }.achievement-card.locked .achievement-state { filter: grayscale(1); font-size: 11px; }.achievement-empty { padding: 15px; border: 1px dashed var(--line); border-radius: 13px; color: var(--muted); font-size: 11px; }.dark .achievement-card { border-color: var(--line); background: #142d37; }.dark .achievement-card.earned { border-color: #315846; background: linear-gradient(135deg,#18392f,#1c3435); }.dark .achievement-heading > span { background: #37321e; color: #e4c775; }.dark .achievement-card.earned .achievement-icon { background: #214633; color: #91d9a8; }
 @media (max-width: 850px) { .achievement-grid { grid-template-columns: 1fr; }.achievement-card { min-height: 82px; }.achievement-copy p { min-height: 0; } }
 @media (max-width: 760px) { .achievement-shelf { margin-bottom: 18px; padding: 15px 12px; border-radius: 17px; }.achievement-heading { align-items: flex-end; }.achievement-heading h2 { font-size: 19px; }.achievement-heading > span { padding: 7px 8px; font-size: 8px; }.achievement-grid { gap: 7px; }.achievement-card { grid-template-columns: 38px minmax(0,1fr) 15px; gap: 9px; padding: 10px; }.achievement-icon { width: 36px; height: 36px; border-radius: 12px; }.achievement-copy b { font-size: 10px; }.achievement-copy p { font-size: 8px; } }
+
+/* Mobile workspace navigation */
+.workspace-header .workspace-mobile-menu,
+.workspace-header .workspace-mobile-logout-icon { display: none; }
+.workspace-header .workspace-desktop-nav { display: flex; }
+.workspace-mobile-menu { position: relative; z-index: 80; }
+.mobile-menu-trigger { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--primary); cursor: pointer; }
+.mobile-menu-trigger svg,.workspace-mobile-logout-icon svg,.mobile-menu-panel svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mobile-menu-panel { position: absolute; top: calc(100% + 12px); right: 0; display: none; width: min(310px,calc(100vw - 28px)); padding: 12px; border: 1px solid var(--line); border-radius: 19px; background: var(--surface); box-shadow: 0 20px 50px #102e3b28; }
+.mobile-menu-panel[data-open="true"] { display: grid; gap: 5px; animation: reveal-up .18s ease both; }
+.mobile-menu-eyebrow { padding: 9px 11px 7px; color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: .15em; }
+.mobile-menu-panel > a,.mobile-menu-panel > button,.mobile-menu-panel form button { display: flex; width: 100%; min-height: 46px; align-items: center; gap: 12px; padding: 0 12px; border: 0; border-radius: 12px; background: transparent; color: var(--ink); font: 700 13px Manrope,sans-serif; text-align: left; text-decoration: none; cursor: pointer; }
+.mobile-menu-panel > a:hover,.mobile-menu-panel > button:hover,.mobile-menu-panel form button:hover,.mobile-menu-panel > button.selected { background: color-mix(in srgb,var(--primary) 10%,var(--surface)); color: var(--primary); }
+.mobile-menu-panel > a > span:last-child,.mobile-menu-panel > button > span:last-child { margin-left: auto; color: var(--primary); }
+.mobile-menu-panel form { margin: 7px 0 0; padding-top: 7px; border-top: 1px solid var(--line); }
+.mobile-menu-panel form button { color: #d65e4b; }
+.workspace-header .workspace-mobile-logout-icon { margin: 0; }
+.workspace-header .workspace-mobile-logout-icon button { display: grid; width: 42px; height: 42px; place-items: center; padding: 0; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--primary); cursor: pointer; }
+.workspace-header .workspace-mobile-logout-icon svg { width: 19px; height: 19px; }
+.dark .mobile-menu-panel { border-color: #31515a; background: #142f38; box-shadow: 0 20px 50px #0008; }
+.dark .mobile-menu-panel form button { color: #ff9784; }
+@media (max-width: 760px) {
+  .workspace-header { position: sticky; top: 0; z-index: 60; min-height: 67px; gap: 8px; padding-inline: 12px; overflow: visible; }
+  .workspace-header .sos-brand-image { width: clamp(104px,32vw,150px); }
+  .workspace-header .workspace-desktop-nav,.workspace-header .workspace-desktop-logout { display: none; }
+  .workspace-header .workspace-mobile-menu,.workspace-header .workspace-mobile-logout-icon { display: block; flex: 0 0 auto; }
+  .workspace-header .theme-toggle { flex: 0 0 40px; width: 40px; height: 40px; }
+  .workspace-header .theme-toggle svg { width: 19px; height: 19px; }
+  .workspace-header .workspace-mobile-logout-icon { margin-left: 0; }
+  .learning-tabs { grid-template-columns: repeat(5,minmax(0,1fr)); gap: 4px; padding: 6px; }
+  .learning-tabs button { min-width: 0; min-height: 51px; gap: 0; padding: 5px 0; font-size: 0; }
+  .learning-tabs .learning-tab-label { display: none; }
+  .learning-tabs button > svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+}
+@media (max-width: 360px) {
+  .workspace-header { gap: 6px; padding-inline: 8px; }
+  .workspace-header .sos-brand-image { width: clamp(96px,29vw,112px); }
+  .workspace-header .theme-toggle,.workspace-header .workspace-mobile-logout-icon button,.mobile-menu-trigger { width: 38px; height: 38px; }
+}
