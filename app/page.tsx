@@ -2,6 +2,7 @@ import Link from "next/link";
 import SosLogo from "./components/sos-logo";
 import HomePlayground from "./components/home-playground";
 import ThemeToggle from "./components/theme-toggle";
+import LandingMobileMenu from "./components/landing-mobile-menu";
 
 const paths = [
   { age: "6–8 ans", title: "Je découvre", text: "Les premiers clics, les écrans et les adultes de confiance.", tone: "peach", icon: "✳" },
@@ -16,7 +17,7 @@ export default function HomePage() {
       <header className="landing-header">
         <SosLogo />
         <nav className="landing-nav" aria-label="Navigation principale"><a href="#parcours">Les parcours</a><a href="#decouvertes">Les découvertes</a><a href="#accompagnement">Notre approche</a></nav>
-        <div className="landing-actions"><ThemeToggle /><Link className="landing-login" href="/connexion">Se connecter</Link><Link className="landing-signup" href="/inscription">Créer un compte <span>↗</span></Link></div>
+        <div className="landing-actions"><ThemeToggle /><Link className="landing-login" href="/connexion">Se connecter</Link><Link className="landing-signup" href="/inscription">Créer un compte <span>↗</span></Link></div><LandingMobileMenu />
       </header>
       <section className="landing-hero">
         <div className="hero-copy"><div className="hero-kicker"><span className="kicker-dot" /> UN ESPACE POUR GRANDIR EN LIGNE</div><h1>Le numérique<br />s’apprend.<br /><span>Ensemble.</span></h1><p className="hero-description">Des repères simples, des défis concrets et des adultes à tes côtés pour vivre Internet avec confiance.</p><div className="hero-cta-row"><Link href="/inscription" className="hero-cta">Je commence l’aventure <span>→</span></Link><span className="hero-note">Gratuit · À ton rythme · Dès 6 ans</span></div><div className="hero-trust"><div className="trust-faces"><span>A</span><span>M</span><span>F</span><span>+</span></div><p><b>Un chemin qui se fait ensemble</b><br />Jeunes, éducateurs et familles avancent côte à côte.</p></div></div>

@@ -293,3 +293,30 @@ html[data-theme="dark"] .educator-welcome { border-color: #214750; background: l
   .workspace-header .sos-brand-image { width: clamp(96px,29vw,112px); }
   .workspace-header .theme-toggle,.workspace-header .workspace-mobile-logout-icon button,.mobile-menu-trigger { width: 38px; height: 38px; }
 }
+
+/* Align mobile header controls to the far edge and expose the public menu. */
+.landing-mobile-menu { display: none; }
+.landing-menu-trigger { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--primary); cursor: pointer; }
+.landing-menu-trigger svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.landing-mobile-panel { position: absolute; top: calc(100% + 12px); right: 12px; display: none; width: min(310px,calc(100vw - 24px)); padding: 13px; border: 1px solid var(--line); border-radius: 19px; background: var(--surface); box-shadow: 0 20px 50px #102e3b28; }
+.landing-mobile-panel[data-open="true"] { display: grid; gap: 5px; animation: reveal-up .18s ease both; }
+.landing-mobile-panel > span { padding: 9px 11px 7px; color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: .15em; }
+.landing-mobile-panel > a { display: flex; min-height: 45px; align-items: center; justify-content: space-between; padding: 0 12px; border-radius: 12px; color: var(--ink); font-size: 13px; font-weight: 700; text-decoration: none; }
+.landing-mobile-panel > a:hover { background: color-mix(in srgb,var(--primary) 10%,var(--surface)); color: var(--primary); }
+.landing-mobile-panel > a i { color: var(--primary); font-style: normal; }
+.landing-mobile-panel > .landing-mobile-create { margin-top: 5px; background: var(--primary); color: white; }
+.landing-mobile-panel > .landing-mobile-create i { color: #ffd247; }
+.dark .landing-mobile-panel { border-color: #31515a; background: #142f38; box-shadow: 0 20px 50px #0008; }
+@media (max-width: 760px) {
+  .workspace-header .theme-toggle { margin-left: auto; }
+  .landing-header { position: sticky; z-index: 90; overflow: visible; }
+  .landing-header .landing-actions { margin-left: auto; }
+  .landing-header .landing-actions .landing-login,.landing-header .landing-actions .landing-signup { display: none; }
+  .landing-mobile-menu { position: relative; z-index: 91; display: block; flex: 0 0 auto; }
+  .landing-menu-trigger { width: 40px; height: 40px; }
+}
+@media (max-width: 360px) {
+  .landing-header { gap: 7px; padding-inline: 9px; }
+  .landing-header .sos-brand-image { width: 105px; }
+  .landing-header .theme-toggle,.landing-menu-trigger { width: 38px; height: 38px; }
+}
