@@ -4,10 +4,18 @@ import { useMemo, useState } from "react";
 
 type Learner = { id: string; display_name: string; age_band: string | null };
 type Progress = { learner_id: string; module_id: string; progress_percent: number; score: number | null; completed_at: string | null; updated_at: string };
+type PracticeAttempt = { id: string; learner_id: string; mission_code: string; attempt_number: number; status: "completed" | "retry"; score: number; demonstrated_criteria: Record<string, boolean | number>; created_at: string };
 type Module = { id: string; track_id: string; title: string; summary: string; estimated_minutes: number };
 type Track = { id: string; title: string; age_min: number; age_max: number };
 
 const ageNames: Record<string, string> = { "6-8": "6–8 ans", "9-11": "9–11 ans", "12-15": "12–15 ans", "16-18": "16–18 ans" };
+const practiceMissionLabels: Record<string, string> = {
+  "message-suspect-01": "Le cadeau qui presse", "identite-numerique-02": "Le profil d’Awa", "enquete-information-03": "La rumeur de l’école", "message-suspect-04": "Le faux concours",
+  "enquete-information-05": "La photo sans contexte", "identite-numerique-06": "La rencontre en ligne", "message-suspect-07": "Le faux message d’un ami", "enquete-information-08": "La vidéo étonnante",
+  "identite-numerique-09": "La photo de groupe", "message-suspect-10": "Le QR code mystère", "identite-numerique-11": "La localisation cachée", "enquete-information-12": "La source imitée",
+  "message-suspect-13": "Le compte à récupérer", "enquete-information-14": "La rumeur amplifiée", "identite-numerique-15": "Le portfolio public", "message-suspect-16": "La mission finale",
+  "message-suspect": "Message suspect", "identite-numerique": "Identité numérique", "enquete-information": "Enquête information",
+};
 
 function getAgeBand(ageBand: string | null) {
   return ageBand && ageNames[ageBand] ? ageNames[ageBand] : "Âge non renseigné";
@@ -20,7 +28,7 @@ function formatLastSeen(date: string | undefined) {
   return new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" }).format(parsed);
 }
 
-export default function EducatorLearnerMonitor({ learners, progress, modules, tracks }: { learners: Learner[]; progress: Progress[]; modules: Module[]; tracks: Track[] }) {
+export default function EducatorLearnerMonitor({ learners, progress, practiceAttempts, modules, tracks }: { learners: Learner[]; progress: Progress[]; practiceAttempts: PracticeAttempt[]; modules: Module[]; tracks: Track[] }) {
   const [query, setQuery] = useState("");
   const [ageFilter, setAgeFilter] = useState("Tous les âges");
   const [sort, setSort] = useState("priority");
@@ -80,6 +88,7 @@ export default function EducatorLearnerMonitor({ learners, progress, modules, tr
       <div className="learner-detail-stats"><div><b>{selected.completed}{selectedModules.length ? ` / ${selectedModules.length}` : ""}</b><small>quiz validés</small></div><div><b>{selected.average === null ? "—" : `${selected.average}%`}</b><small>score moyen</small></div><div><b>{selected.active}</b><small>en cours</small></div></div>
       <div className="learner-detail-progress"><div><b>Avancement du parcours</b><span>{selectedModules.length ? `${progressPercent}%` : "Parcours indisponible"}</span></div><i><span style={{ width: `${progressPercent}%` }}/></i></div>
       {selectedModules.length ? <div className="learner-detail-modules">{selectedModules.map((module) => { const item = selectedProgress.get(module.id); const status = item?.completed_at ? "Validé" : item?.progress_percent ? `${item.progress_percent}% commencé` : "À découvrir"; return <article key={module.id}><span className={item?.completed_at ? "module-done" : ""}>{item?.completed_at ? "✓" : "○"}</span><div><b>{module.title}</b><small>{module.estimated_minutes} min · {status}{item?.score !== null && item?.score !== undefined ? ` · score ${item.score}%` : ""}</small></div></article>; })}</div> : <p className="learner-detail-no-track">Aucun parcours publié ne correspond actuellement à sa tranche d’âge.</p>}
+      <div className="learner-practice-results"><div className="practice-results-heading"><div><span className="educator-kicker">MISES EN PRATIQUE</span><b>Laboratoire du numérique</b></div><span>{practiceAttempts.filter((attempt) => attempt.learner_id === selected.learner.id).length} tentative{practiceAttempts.filter((attempt) => attempt.learner_id === selected.learner.id).length === 1 ? "" : "s"}</span></div>{practiceAttempts.filter((attempt) => attempt.learner_id === selected.learner.id).length ? <div className="practice-result-list">{practiceAttempts.filter((attempt) => attempt.learner_id === selected.learner.id).slice(0, 8).map((attempt) => { const criteria = Object.entries(attempt.demonstrated_criteria).filter(([key]) => key !== "indices_reperes" && key !== "sources_consultees" && key !== "informations_protegees" && key !== "informations_a_proteger"); const metCount = criteria.filter(([, value]) => value === true).length; return <article key={attempt.id}><span className={attempt.status === "completed" ? "practice-result-check is-complete" : "practice-result-check"}>{attempt.status === "completed" ? "✓" : "↻"}</span><div><b>{practiceMissionLabels[attempt.mission_code] ?? attempt.mission_code}</b><small>{attempt.status === "completed" ? "Simulation réussie" : "À retravailler"} · Essai {attempt.attempt_number} · {attempt.score}% · {metCount}/{criteria.length} critères cochés</small></div><time>{new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(new Date(attempt.created_at))}</time></article>; })}</div> : <p className="practice-results-empty">Aucune mission pratique enregistrée pour le moment. Les simulations réussies ne constituent pas à elles seules une certification de compétence.</p>}</div>
       <aside className="educator-recommendation"><span>✦</span><div><b>Une piste pour votre prochain échange</b><p>{recommendation}</p></div></aside>
     </section>}
   </div>;

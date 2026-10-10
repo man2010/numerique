@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/inscription/layout,_N_T_/inscription/page,_N_T_/inscription"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/4e830e31b980c9a73c823559a5f23346e5c56a952f34073376d4b9b0213466b2/$/inscription",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/inscription/page"
+    },
+    "isFallback": false
+  }
+}

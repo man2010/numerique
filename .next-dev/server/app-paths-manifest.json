@@ -1,5 +1,4 @@
 {
   "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
-  "/espace-jeune/page": "app/espace-jeune/page.js",
-  "/connexion/page": "app/connexion/page.js"
+  "/espace-jeune/page": "app/espace-jeune/page.js"
 }

@@ -7,6 +7,7 @@ import EducatorLearnerMonitor from "./educator-learner-monitor";
 
 type Learner = { id: string; display_name: string; age_band: string | null };
 type ModuleProgress = { learner_id: string; module_id: string; progress_percent: number; score: number | null; completed_at: string | null; updated_at: string };
+type PracticeAttempt = { id: string; learner_id: string; mission_code: string; attempt_number: number; status: "completed" | "retry"; score: number; demonstrated_criteria: Record<string, boolean | number>; created_at: string };
 type LearningModule = { id: string; track_id: string; title: string; summary: string; estimated_minutes: number };
 type Track = { id: string; title: string; description: string; age_min: number; age_max: number };
 
@@ -32,9 +33,15 @@ export default async function WorkspacePage() {
   const tracks = (trackData ?? []) as Track[];
   const modules = (moduleData ?? []) as LearningModule[];
   let progress: ModuleProgress[] = [];
+  let practiceAttempts: PracticeAttempt[] = [];
   if (learners.length) {
-    const { data } = await supabase.from("module_progress").select("learner_id, module_id, progress_percent, score, completed_at, updated_at").in("learner_id", learners.map((learner) => learner.id)).order("updated_at", { ascending: false });
-    progress = (data ?? []) as ModuleProgress[];
+    const ids = learners.map((learner) => learner.id);
+    const [progressResult, practiceResult] = await Promise.all([
+      supabase.from("module_progress").select("learner_id, module_id, progress_percent, score, completed_at, updated_at").in("learner_id", ids).order("updated_at", { ascending: false }),
+      supabase.from("practice_attempts").select("id, learner_id, mission_code, attempt_number, status, score, demonstrated_criteria, created_at").in("learner_id", ids).order("created_at", { ascending: false }),
+    ]);
+    progress = (progressResult.data ?? []) as ModuleProgress[];
+    practiceAttempts = (practiceResult.data ?? []) as PracticeAttempt[];
   }
   const completed = progress.filter((item) => item.completed_at).length;
   const active = progress.filter((item) => item.progress_percent > 0 && !item.completed_at).length;
@@ -60,7 +67,7 @@ export default async function WorkspacePage() {
       <div className="educator-main-grid">
         <section className="educator-panel learners-panel" id="jeunes">
           <div className="educator-section-heading"><div><span className="educator-kicker">TON GROUPE</span><h2>Les jeunes que tu accompagnes</h2><p>Un aperçu de leur activité et de leurs progrès.</p></div><span className="educator-count-pill">{learners.length} jeune{learners.length === 1 ? "" : "s"}</span></div>
-          {learners.length ? <EducatorLearnerMonitor learners={learners} progress={progress} modules={modules} tracks={tracks} /> : <div className="educator-empty-state"><div className="empty-illustration" aria-hidden="true"><span>👩🏾‍🏫</span><i>✦</i></div><div><b>Ton groupe se construit ici</b><p>Aucun jeune n’est encore rattaché à ton compte. Dès que l’équipe associera les profils, tu retrouveras ici leur activité et leurs progrès.</p></div></div>}
+          {learners.length ? <EducatorLearnerMonitor learners={learners} progress={progress} practiceAttempts={practiceAttempts} modules={modules} tracks={tracks} /> : <div className="educator-empty-state"><div className="empty-illustration" aria-hidden="true"><span>👩🏾‍🏫</span><i>✦</i></div><div><b>Ton groupe se construit ici</b><p>Aucun jeune n’est encore rattaché à ton compte. Dès que l’équipe associera les profils, tu retrouveras ici leur activité et leurs progrès.</p></div></div>}
           <div className="educator-privacy-note"><span>♧</span> Les données affichées sont limitées aux jeunes rattachés à ton compte.</div>
         </section>
 
